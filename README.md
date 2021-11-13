@@ -36,7 +36,7 @@ Account account = new Account("PHPSESSID HERE", "awbw_username HERE", "awbw_pass
 ```
 Make sure to keep these tokens private, as anyone with them can control your account.
 
-Here are some examples of how to use the API:
+### Here are some examples of how to use the API:
 <details>
   <summary>Create API</summary>
   
@@ -105,3 +105,6 @@ GameBans bans = new GameBans()
 Game game = await api.CreateGame(account, "Game Name", map, "This is the description of the game.", settings, bans);
 ```  
 </details>
+
+#
+I'm still working on new features, so any feedback is appreciated.
