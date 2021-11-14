@@ -46,7 +46,7 @@ AWBWApi api = new AWBWApi();
 </details>
 
 <details>
-  <summary>Get A Map</summary>
+  <summary>Get a Map</summary>
   
 ```C#
 // Get map with ID '12345'
@@ -55,7 +55,7 @@ Map map = await api.GetMap(12345);
 </details>
 
 <details>
-  <summary>Create A TimerSettings Object</summary>
+  <summary>Create a TimerSettings Object</summary>
   
 ```C#
 TimerSettings timer = new TimerSettings()
@@ -71,7 +71,7 @@ TimerSettings timer = new TimerSettings()
 </details>
 
 <details>
-  <summary>Create A GameSettings Object</summary>
+  <summary>Create a GameSettings Object</summary>
   
 ```C#
 GameSettings settings = new GameSettings()
@@ -85,7 +85,7 @@ GameSettings settings = new GameSettings()
 </details>
 
 <details>
-  <summary>Create A GameBans Object</summary>
+  <summary>Create a GameBans Object</summary>
   
 ```C#
 GameBans bans = new GameBans()
@@ -98,11 +98,31 @@ GameBans bans = new GameBans()
 </details>
 
 <details>
-  <summary>Create A Game</summary>
+  <summary>Create a Game</summary>
   
 ```C#
 // Create a public game with the name 'Game Name' and description 'This is the description of the game.'
 Game game = await api.CreateGame(account, "Game Name", map, "This is the description of the game.", settings, bans);
+```  
+</details>
+
+
+<details>
+  <summary>Get a Game</summary>
+  
+```C#
+// Get game with ID '456789'
+Game game = await api.GetGame(account, 456789);
+```  
+</details>
+
+
+<details>
+  <summary>Join a Game</summary>
+  
+```C#
+// Join a public game as Blue Moon with CO Colin.
+await api.JoinGame(account, game, Country.BlueMoon, CO.Colin);
 ```  
 </details>
 
