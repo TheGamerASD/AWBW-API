@@ -27,6 +27,7 @@ namespace AWBW
             client.DefaultRequestHeaders.Add("Sec-Fetch-User", "?1");
             client.DefaultRequestHeaders.Add("Sec-GPC", "1");
             client.DefaultRequestHeaders.Add("Pragma", "no-cache");
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (compatible; AWBW-API/1.0; +https://github.com/TheGamerASD/AWBW-API)");
 
             HttpResponseMessage response = await client.GetAsync($"https://awbw.amarriner.com/{page}");
 
@@ -51,6 +52,7 @@ namespace AWBW
             client.DefaultRequestHeaders.Add("Sec-Fetch-User", "?1");
             client.DefaultRequestHeaders.Add("Sec-GPC", "1");
             client.DefaultRequestHeaders.Add("Pragma", "no-cache");
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (compatible; AWBW-API/1.0; +https://github.com/TheGamerASD/AWBW-API)");
 
             HttpResponseMessage response = await client.GetAsync($"https://awbw.amarriner.com/{page}");
 
@@ -84,6 +86,7 @@ namespace AWBW
             client.DefaultRequestHeaders.Add("Sec-GPC", "1");
             client.DefaultRequestHeaders.Add("Pragma", "no-cache");
             client.DefaultRequestHeaders.Add("Cache-Control", "no-cache");
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (compatible; AWBW-API/1.0; +https://github.com/TheGamerASD/AWBW-API)");
 
             FormUrlEncodedContent content = new(requestBody);
 
@@ -118,6 +121,7 @@ namespace AWBW
             client.DefaultRequestHeaders.Add("Sec-GPC", "1");
             client.DefaultRequestHeaders.Add("Pragma", "no-cache");
             client.DefaultRequestHeaders.Add("Cache-Control", "no-cache");
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (compatible; AWBW-API/1.0; +https://github.com/TheGamerASD/AWBW-API)");
 
             FormUrlEncodedContent content = new(requestBody);
 
