@@ -29,7 +29,7 @@ namespace AWBW
         /// <param name="gameSettings">The settings the game will use.</param>
         /// <param name="gameBans">The bans the game will use.</param>
         /// <returns>The game which has been created.</returns>
-        public async Task<Game> CreateGame(Account account, string name, Map map, string comment, GameSettings gameSettings, GameBans gameBans) => await CreatePrivateGame(account, name, map, "", comment, gameSettings, gameBans);
+        public async Task<Game> CreateGame(Account account, string name, Map map, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null) => await CreatePrivateGame(account, name, map, "", comment, gameSettings, gameBans);
 
         /// <summary>
         /// Create a private game.
@@ -42,12 +42,15 @@ namespace AWBW
         /// <param name="gameSettings">The settings the game will use.</param>
         /// <param name="gameBans">The bans the game will use.</param>
         /// <returns>The game which has been created.</returns>
-        public async Task<Game> CreatePrivateGame(Account account, string name, Map map, string password, string comment, GameSettings gameSettings, GameBans gameBans)
+        public async Task<Game> CreatePrivateGame(Account account, string name, Map map, string password, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null)
         {
             if (name.Length > 40)
             {
                 throw new ArgumentException($"Game name is {name.Length - 40} character{(name.Length - 40 == 1 ? "" : "s")} too long.");
             }
+
+            gameSettings ??= new();
+            gameBans ??= new();
 
             List<(string key, string value)> pairs = new();
 
@@ -109,7 +112,7 @@ namespace AWBW
         /// <param name="comment">The description of the game.</param>
         /// <param name="gameSettings">The settings the game will use.</param>
         /// <param name="gameBans">The bans the game will use.</param>
-        public async Task CreateEmptyGame(Account account, string name, Map map, string comment, GameSettings gameSettings, GameBans gameBans) => await CreatePrivateEmptyGame(account, name, map, "", comment, gameSettings, gameBans);
+        public async Task CreateEmptyGame(Account account, string name, Map map, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null) => await CreatePrivateEmptyGame(account, name, map, "", comment, gameSettings, gameBans);
 
         /// <summary>
         /// Create a private game with no players in it, similar to a Z-Game.
@@ -123,12 +126,15 @@ namespace AWBW
         /// <param name="comment">The description of the game.</param>
         /// <param name="gameSettings">The settings the game will use.</param>
         /// <param name="gameBans">The bans the game will use.</param>
-        public async Task CreatePrivateEmptyGame(Account account, string name, Map map, string password, string comment, GameSettings gameSettings, GameBans gameBans)
+        public async Task CreatePrivateEmptyGame(Account account, string name, Map map, string password, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null)
         {
             if (name.Length > 40)
             {
                 throw new ArgumentException($"Game name is {name.Length - 40} character{(name.Length - 40 == 1 ? "" : "s")} too long.");
             }
+
+            gameSettings ??= new();
+            gameBans ??= new();
 
             List<(string key, string value)> pairs = new();
 

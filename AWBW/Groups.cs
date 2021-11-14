@@ -8,22 +8,75 @@ namespace AWBW
 {
     public class GameSettings
     {
+        /// <summary>
+        /// The weather in the game.
+        /// </summary>
         public Weather weather = Weather.Clear;
+        /// <summary>
+        /// If fog of war is enabled or not.
+        /// </summary>
         public bool fog = false;
+        /// <summary>
+        /// If CO powers are enabled or not.
+        /// </summary>
         public bool coPowers = true;
+        /// <summary>
+        /// The funds gained per property per turn.
+        /// </summary>
         public int fundsPerTurn = 1000;
+        /// <summary>
+        /// The funds each player gets at the start of the game.
+        /// </summary>
         public int startingFunds = 0;
+        /// <summary>
+        /// The amount of properties a player needs to own to win.
+        /// </summary>
         public int captureLimit = 1000;
+        /// <summary>
+        /// After the days limit is reached, the player who owns the most buildings wins.
+        /// </summary>
         public int daysLimit = 0;
+        /// <summary>
+        /// The maximum amount of units a player can have at once.
+        /// </summary>
         public int unitLimit = 50;
+        /// <summary>
+        /// The timer settings of the game.
+        /// </summary>
         public TimerSettings timerSettings = new TimerSettings();
     }
 
     public class TimerSettings
     {
-        public int initialTime = 7, increment = 1, maxTurnTime = 7;
-        public TimeUnit initialTimeUnit = TimeUnit.Days, incrementUnit = TimeUnit.Days, maxTurnTimeUnit = TimeUnit.Days;
+        /// <summary>
+        /// The initial time all players start with.
+        /// </summary>
+        public int initialTime = 7;
+        /// <summary>
+        /// The amount of time given at the start of a player's turn.
+        /// </summary>
+        public int increment = 1;
+        /// <summary>
+        /// The maximum time a turn can last for.
+        /// </summary>
+        public int maxTurnTime = 7;
+        /// <summary>
+        /// The unit of time to use for the initial time.
+        /// </summary>
+        public TimeUnit initialTimeUnit = TimeUnit.Days;
+        /// <summary>
+        /// The unit of time to use for the increment.
+        /// </summary>
+        public TimeUnit incrementUnit = TimeUnit.Days;
+        /// <summary>
+        /// The unit of time to use for the max turn time.
+        /// </summary>
+        public TimeUnit maxTurnTimeUnit = TimeUnit.Days;
 
+        /// <summary>
+        /// Live play timer settings:
+        /// 10 min. initial, 1 min. increment, 5 min. max.
+        /// </summary>
         public static TimerSettings LivePlay
         {
             get => new()
@@ -37,6 +90,10 @@ namespace AWBW
             };
         }
 
+        /// <summary>
+        /// Global league timer settings:
+        /// 10 days initial, 2 days increment, 7 days max.
+        /// </summary>
         public static TimerSettings GlobalLeague
         {
             get => new()
@@ -53,10 +110,24 @@ namespace AWBW
 
     public class GameBans
     {
+        /// <summary>
+        /// The COs which are banned.
+        /// </summary>
         public CO[] bannedCOs = Array.Empty<CO>();
+        /// <summary>
+        /// The units which are banned.
+        /// </summary>
         public Unit[] bannedUnits = Array.Empty<Unit>();
+        /// <summary>
+        /// The units which can only be built by players who own a lab.
+        /// </summary>
         public Unit[] labUnits = Array.Empty<Unit>();
 
+        /// <summary>
+        /// Get an array of banned COs from a tier.
+        /// </summary>
+        /// <param name="tier">The tier to get banned COs from. Any COs above this tier will be returned.</param>
+        /// <returns>An array of banned COs.</returns>
         public static CO[] GetBannedCOsFromTier(Tier tier)
         {
             return tier switch

@@ -8,20 +8,50 @@ namespace AWBW
 {
     public class Game
     {
+        /// <summary>
+        /// The ID of the game.
+        /// </summary>
         public int id;
+        /// <summary>
+        /// The name of the game.
+        /// </summary>
         public string name;
+        /// <summary>
+        /// The map the game is on.
+        /// </summary>
         public Map map;
+        /// <summary>
+        /// The settings the game uses.
+        /// </summary>
         public GameSettings settings;
+        /// <summary>
+        /// The bans the game uses.
+        /// </summary>
         public GameBans bans;
 
+        /// <summary>
+        /// If the game has a password or not.
+        /// </summary>
         public bool isPrivate;
     }
 
     public struct Map
     {
+        /// <summary>
+        /// The ID of the map.
+        /// </summary>
         public int id;
+        /// <summary>
+        /// The name of the map.
+        /// </summary>
         public string name;
+        /// <summary>
+        /// The amount of players on the map.
+        /// </summary>
         public int players;
+        /// <summary>
+        /// An array of the categories the map has.
+        /// </summary>
         public MapCategory[] categories;
 
         public override bool Equals(object obj)
@@ -49,6 +79,12 @@ namespace AWBW
     {
         internal string cookie, username, password;
 
+        /// <summary>
+        /// See https://github.com/TheGamerASD/AWBW-API/blob/main/README.md for how to create an account.
+        /// </summary>
+        /// <param name="phpsessid">Your PHPSESSID cookie.</param>
+        /// <param name="awbwusername">Your username cookie.</param>
+        /// <param name="awbwpassword">Your password cookie. It should start with a % sign.</param>
         public Account(string phpsessid, string awbwusername, string awbwpassword)
         {
             cookie = $"PHPSESSID={phpsessid}; awbw_username={awbwusername}; awbw_password={awbwpassword}";
@@ -59,6 +95,9 @@ namespace AWBW
 
     public struct User
     {
+        /// <summary>
+        /// The username of the user.
+        /// </summary>
         public string username;
 
         public override bool Equals(object obj)
