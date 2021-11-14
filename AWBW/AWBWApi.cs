@@ -366,7 +366,6 @@ namespace AWBW
         {
             HttpResponseMessage response = await client.HttpGet($"prevmaps.php?maps_id={mapID}");
             string html = await response.Content.ReadAsStringAsync();
-            Console.WriteLine(html);
 
             string mapName = Regex.Match(html, @"(?<=<a class=bordertitle href=""prevmaps.php\?maps_id=\d{1,7}"">).+?(?=<\/a>)").Value;
 

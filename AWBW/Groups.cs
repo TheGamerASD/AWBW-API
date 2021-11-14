@@ -146,5 +146,22 @@ namespace AWBW
                 _ => throw new ArgumentException("Invalid tier.")
             };
         }
+
+        /// <summary>
+        /// Get a random tier from a game type.
+        /// </summary>
+        /// <param name="random">The <c>Random</c> instance to use.</param>
+        /// <param name="type">The game type.</param>
+        /// <returns>A random tier.</returns>
+        public static Tier GetRandomTier(Random random, GameType type)
+        {
+            return type switch
+            {
+                GameType.Standard => (Tier) random.Next(0, 4),
+                GameType.FogOfWar => (Tier) random.Next(4, 8),
+                GameType.HighFunds => (Tier) random.Next(8, 11),
+                _ => throw new ArgumentException("Invalid game type.")
+            };
+        }
     }
 }

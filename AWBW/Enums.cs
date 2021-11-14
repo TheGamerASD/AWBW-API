@@ -85,6 +85,25 @@ namespace AWBW
         {
             return ((int)category).ToString();
         }
+
+        public static int AsInt(this Tier tier)
+        {
+            return tier switch
+            {
+                Tier.StdTier1 => 1,
+                Tier.StdTier2 => 2,
+                Tier.StdTier3 => 3,
+                Tier.StdTier4 => 4,
+                Tier.FogTier1 => 1,
+                Tier.FogTier2 => 2,
+                Tier.FogTier3 => 3,
+                Tier.FogTier4 => 4,
+                Tier.HFTier1 => 1,
+                Tier.HFTier2 => 2,
+                Tier.HFTier3 => 3,
+                _ => throw new ArgumentException("Invalid tier.")
+            };
+        }
     }
 
     public enum GameState
@@ -121,7 +140,14 @@ namespace AWBW
         FogTier4,
         HFTier1,
         HFTier2,
-        HFTier3,
+        HFTier3
+    }
+
+    public enum GameType
+    {
+        Standard,
+        FogOfWar,
+        HighFunds
     }
 
     public enum CO
