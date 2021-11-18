@@ -120,4 +120,9 @@ namespace AWBW
             return a.username != b.username;
         }
     }
+
+    public struct MapData
+    {
+        public string data;
+    }
 }

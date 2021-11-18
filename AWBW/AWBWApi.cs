@@ -369,7 +369,7 @@ namespace AWBW
 
             string mapName = Regex.Match(html, @"(?<=<a class=bordertitle href=""prevmaps.php\?maps_id=\d{1,7}"">).+?(?=<\/a>)").Value;
 
-            int mapPlayers = int.Parse(Regex.Match(html, @"(?<=First Published: \d{1,2}\/\d{1,2}\/\d{4} \|\| Players: )\d{1,2}(?= \|\| Size: \d{1,}x\d{1,})").Value);
+            int mapPlayers = int.Parse(Regex.Match(html, @"(?<=First Published: (\d{1,2}\/\d{1,2}\/\d{4}|N\/A) \|\| Players: )\d{1,2}(?= \|\| Size: \d{1,}x\d{1,})").Value);
 
             MatchCollection categoryMatches = Regex.Matches(html, @"(?<=<a href=""categories\.php\?categories_id=)\d{1,2}(?="">[\w-/ ]+?<\/a>)");
 
@@ -450,6 +450,74 @@ namespace AWBW
             }
 
             return maps.ToArray();
+        }
+
+        public async Task<MapData> GetMapData(Map map)
+        {
+            HttpResponseMessage response = await client.HttpGet($"text_map.php?maps_id={map.id}");
+            string html = await response.Content.ReadAsStringAsync();
+
+            MatchCollection matches = Regex.Matches(html, @"(?<=<td>)(\d{0,3},?)+(?=<\/td><\/tr>)");
+            string[] lines = matches.ToList().ConvertAll(m => m.Value).ToArray();
+
+            string data = "";
+
+            foreach (string line in lines)
+            {
+                data += line + '\n';
+            }
+
+            return new MapData() { data = data.TrimEnd('\n') };
+        }
+
+        public async Task UploadMap(Account account, string name, MapData data)
+        {
+            List<KeyValuePair<string, string>> requestBody = new();
+
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Add("Host", "awbw.amarriner.com");
+            client.DefaultRequestHeaders.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*; q = 0.8");
+            client.DefaultRequestHeaders.Add("Accept-Language", "en-US,en;q=0.5");
+            client.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
+            client.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "multipart/form-data; boundary=---------------------------11466449483518124774564916098");
+            client.DefaultRequestHeaders.Add("Origin", "https://awbw.amarriner.com");
+            client.DefaultRequestHeaders.Add("Connection", "keep-alive");
+            client.DefaultRequestHeaders.Add("Referer", $"https://awbw.amarriner.com/uploadmap.php");
+            client.DefaultRequestHeaders.Add("Cookie", account.cookie);
+            client.DefaultRequestHeaders.Add("Upgrade-Insecure-Requests", "1");
+            client.DefaultRequestHeaders.Add("Sec-Fetch-Dest", "document");
+            client.DefaultRequestHeaders.Add("Sec-Fetch-Mode", "navigate");
+            client.DefaultRequestHeaders.Add("Sec-Fetch-Site", "same-origin");
+            client.DefaultRequestHeaders.Add("Sec-Fetch-User", "?1");
+            client.DefaultRequestHeaders.Add("Sec-GPC", "1");
+            client.DefaultRequestHeaders.Add("Pragma", "no-cache");
+            client.DefaultRequestHeaders.Add("Cache-Control", "no-cache");
+            client.DefaultRequestHeaders.Add("User-Agent", Utils.userAgent);
+
+            MultipartFormDataContent content = new("-----------------------------11466449483518124774564916098");
+
+            StringContent content1 = new("UPLOAD");
+            content1.Headers.TryAddWithoutValidation("Content-Disposition", "Content-Disposition: form-data; name=\"action\"");
+            content.Add(content1, "action");
+
+            StringContent content2 = new(data.data);
+            content2.Headers.TryAddWithoutValidation("Content-Disposition", "form-data; name=\"mapfile\"; filename=\"data.txt\"");
+            content2.Headers.TryAddWithoutValidation("Content-Type", "text/plain");
+            content.Add(content2, "mapfile", "data.txt");
+
+            StringContent content3 = new(name);
+            content3.Headers.TryAddWithoutValidation("Content-Disposition", "form-data; name=\"name\"");
+            content.Add(content3, "name");
+
+            StringContent content4 = new("AWBW");
+            content4.Headers.TryAddWithoutValidation("Content-Disposition", "form-data; name=\"format\"");
+            content.Add(content4, "format");
+
+            StringContent content5 = new("new");
+            content5.Headers.TryAddWithoutValidation("Content-Disposition", "form-data; name=\"overwrite\"");
+            content.Add(content5, "overwrite");
+
+            await client.PostAsync("https://awbw.amarriner.com/uploadmap.php", content);
         }
     }
 }
