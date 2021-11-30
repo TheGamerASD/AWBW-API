@@ -164,4 +164,23 @@ namespace AWBW
             };
         }
     }
+
+    public class MapSearchFilters
+    {
+        public string name = "";
+        public string creator = "";
+        public int minPlayers = 2;
+        public int maxPlayers = 16;
+        public DateTime minFirstPublishedDate;
+        public DateTime maxFirstPublishedDate;
+        public DateTime minLastPublishedDate;
+        public DateTime maxLastPublishedDate;
+        public int minWidth;
+        public int maxWidth;
+        public int minHeight;
+        public int maxHeight;
+
+        public bool and = false;
+        public MapCategory[] categories = Array.Empty<MapCategory>();
+    }
 }

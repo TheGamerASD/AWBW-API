@@ -86,6 +86,21 @@ namespace AWBW
             return ((int)category).ToString();
         }
 
+        public static string GetID(this MapSortCriteria sortCriteria)
+        {
+            return sortCriteria switch
+            {
+                MapSortCriteria.MapName => "lower_name",
+                MapSortCriteria.Creator => "users_username",
+                MapSortCriteria.Players => "maps_players",
+                MapSortCriteria.FirstPublished => "maps_first_published_date",
+                MapSortCriteria.LastPublished => "maps_published_date",
+                MapSortCriteria.MapWidth => "max_x",
+                MapSortCriteria.MapHeight => "max_y",
+                _ => throw new ArgumentException("Invalid sort criteria.")
+            };
+        }
+
         public static int AsInt(this Tier tier)
         {
             return tier switch
@@ -255,5 +270,16 @@ namespace AWBW
         TeleportTile = 27,
         FFAMultiplay = 13,
         TeamPlay = 12
+    }
+
+    public enum MapSortCriteria
+    {
+        MapName,
+        Creator,
+        Players,
+        FirstPublished,
+        LastPublished,
+        MapWidth,
+        MapHeight
     }
 }

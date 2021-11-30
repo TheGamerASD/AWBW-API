@@ -470,6 +470,86 @@ namespace AWBW
             return new MapData() { data = data.TrimEnd('\n') };
         }
 
+        public async Task<Map[]> SearchMaps(MapSearchFilters searchFilters, MapSortCriteria firstBy = MapSortCriteria.MapName, MapSortCriteria thenBy = MapSortCriteria.MapName, MapSortCriteria lastBy = MapSortCriteria.MapName)
+        {
+            Map[] GetMapsFromPage(string html)
+            {
+                List<Map> mapList = new();
+
+                MatchCollection idMatches = Regex.Matches(html, @"(?<=<a href=prevmaps.php\?maps_id=)\d{1,7}(?=>.+?<\/a>)");
+
+                MatchCollection nameMatches = Regex.Matches(html, @"(?<=<a href=prevmaps.php\?maps_id=\d{1,7}>).+?(?=<\/a>)");
+
+                MatchCollection playerMatches = Regex.Matches(html, @"(?<=<td  valign=top align=left>\n<span class=small_text>\nPlayers: )\d{1,2}(?=<br>)");
+
+                for (int i = 0; i < idMatches.Count; i++)
+                {
+                    MatchCollection categoryMatches = Regex.Matches(html, @"(?<=<a href=""categories\.php\?categories_id=)\d{1,2}(?="">[\w-/ ]+?<\/a>)");
+
+                    List<MapCategory> categories = new();
+
+                    foreach (Match match in categoryMatches.ToArray())
+                    {
+                        categories.Add(Enum.Parse<MapCategory>(match.Value));
+                    }
+
+                    mapList.Add(new Map() { id = int.Parse(idMatches[i].Value), name = nameMatches[i].Value, players = int.Parse(playerMatches[i].Value), categories = categories.ToArray() });
+                }
+
+                return mapList.ToArray();
+            }
+
+            List<(string key, string value)> pairs = new();
+
+            pairs.AddRange(
+                new[]
+                {
+                    ("name", $"{searchFilters.name}"),
+                    ("users_username", $"{searchFilters.creator}"),
+                    ("min_players", $"{searchFilters.minPlayers}"),
+                    ("max_players", $"{searchFilters.maxPlayers}"),
+                    ("min_first_pub", $"{(searchFilters.minFirstPublishedDate == default ? "" : searchFilters.minFirstPublishedDate)}"),
+                    ("max_first_pub", $"{(searchFilters.maxFirstPublishedDate == default ? "" : searchFilters.maxFirstPublishedDate)}"),
+                    ("min_last_pub", $"{(searchFilters.minLastPublishedDate == default ? "" : searchFilters.minLastPublishedDate)}"),
+                    ("max_last_pub", $"{(searchFilters.maxLastPublishedDate == default ? "" : searchFilters.maxLastPublishedDate)}"),
+                    ("min_map_width", $"{(searchFilters.minWidth == 0 ? "" : searchFilters.minWidth)}"),
+                    ("max_map_width", $"{(searchFilters.maxWidth == 0 ? "" : searchFilters.maxWidth)}"),
+                    ("min_map_height", $"{(searchFilters.minHeight == 0 ? "" : searchFilters.minHeight)}"),
+                    ("max_map_height", $"{(searchFilters.maxHeight == 0 ? "" : searchFilters.maxHeight)}"),
+                    ("and_or", $"{(searchFilters.and ? "and" : "or")}"),
+                    ("sort1", $"{firstBy.GetID()}"),
+                    ("sort2", $"{thenBy.GetID()}"),
+                    ("sort3", $"{lastBy.GetID()}"),
+                    ("search", $"1")
+                }
+            );
+
+            foreach (MapCategory category in searchFilters.categories)
+            {
+                pairs.Add(("categories[]", $"{category.GetID()}"));
+            }
+
+            HttpResponseMessage response = await client.HttpPost("searchmaps.php", "searchmaps.php", pairs.ToArray());
+            string html = await response.Content.ReadAsStringAsync();
+
+            int totalMaps = int.Parse(Regex.Match(html, @"(?<=<span class=yellow_text_plain>\()\d+(?=&nbsp;Maps\)<\/span>)").Value);
+            int pages = (int)Math.Ceiling(totalMaps / 25d);
+
+            List<Map> maps = new();
+
+            maps.AddRange(GetMapsFromPage(html));
+
+            for (int i = 1; i < pages; i++)
+            {
+                HttpResponseMessage responseMessage = await client.HttpGet($"searchmaps.php?start={(i * 25 + 1)}");
+                string pagehtml = await responseMessage.Content.ReadAsStringAsync();
+
+                maps.AddRange(GetMapsFromPage(pagehtml));
+            }
+
+            return maps.ToArray();
+        }
+
         public async Task UploadMap(Account account, string name, MapData data)
         {
             List<KeyValuePair<string, string>> requestBody = new();
