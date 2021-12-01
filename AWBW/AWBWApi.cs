@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace AWBW
 {
@@ -472,7 +473,7 @@ namespace AWBW
 
         public async Task<Map[]> SearchMaps(MapSearchFilters searchFilters, MapSortCriteria firstBy = MapSortCriteria.MapName, MapSortCriteria thenBy = MapSortCriteria.MapName, MapSortCriteria lastBy = MapSortCriteria.MapName)
         {
-            Map[] GetMapsFromPage(string html)
+            Map[] GetMapsFromPage(string html, int start = 1)
             {
                 List<Map> mapList = new();
 
@@ -484,7 +485,7 @@ namespace AWBW
 
                 for (int i = 0; i < idMatches.Count; i++)
                 {
-                    MatchCollection categoryMatches = Regex.Matches(html, @"(?<=<a href=""categories\.php\?categories_id=)\d{1,2}(?="">[\w-/ ]+?<\/a>)");
+                    MatchCollection categoryMatches = Regex.Matches(html.Split($"<b>{i + start}.</b>")[1].Split($"<b>{i + start + 1}.</b>")[0], @"(?<=<a href=""categories\.php\?categories_id=)\d{1,2}(?="">[\w-/ ]+?<\/a>)");
 
                     List<MapCategory> categories = new();
 
@@ -508,10 +509,10 @@ namespace AWBW
                     ("users_username", $"{searchFilters.creator}"),
                     ("min_players", $"{searchFilters.minPlayers}"),
                     ("max_players", $"{searchFilters.maxPlayers}"),
-                    ("min_first_pub", $"{(searchFilters.minFirstPublishedDate == default ? "" : searchFilters.minFirstPublishedDate)}"),
-                    ("max_first_pub", $"{(searchFilters.maxFirstPublishedDate == default ? "" : searchFilters.maxFirstPublishedDate)}"),
-                    ("min_last_pub", $"{(searchFilters.minLastPublishedDate == default ? "" : searchFilters.minLastPublishedDate)}"),
-                    ("max_last_pub", $"{(searchFilters.maxLastPublishedDate == default ? "" : searchFilters.maxLastPublishedDate)}"),
+                    ("min_first_pub", $"{(searchFilters.minFirstPublishedDate == default ? "" : searchFilters.minFirstPublishedDate.ToString("d", CultureInfo.InvariantCulture))}"),
+                    ("max_first_pub", $"{(searchFilters.maxFirstPublishedDate == default ? "" : searchFilters.maxFirstPublishedDate.ToString("d", CultureInfo.InvariantCulture))}"),
+                    ("min_last_pub", $"{(searchFilters.minLastPublishedDate == default ? "" : searchFilters.minLastPublishedDate.ToString("d", CultureInfo.InvariantCulture))}"),
+                    ("max_last_pub", $"{(searchFilters.maxLastPublishedDate == default ? "" : searchFilters.maxLastPublishedDate.ToString("d", CultureInfo.InvariantCulture))}"),
                     ("min_map_width", $"{(searchFilters.minWidth == 0 ? "" : searchFilters.minWidth)}"),
                     ("max_map_width", $"{(searchFilters.maxWidth == 0 ? "" : searchFilters.maxWidth)}"),
                     ("min_map_height", $"{(searchFilters.minHeight == 0 ? "" : searchFilters.minHeight)}"),
@@ -544,7 +545,7 @@ namespace AWBW
                 HttpResponseMessage responseMessage = await client.HttpGet($"searchmaps.php?start={(i * 25 + 1)}");
                 string pagehtml = await responseMessage.Content.ReadAsStringAsync();
 
-                maps.AddRange(GetMapsFromPage(pagehtml));
+                maps.AddRange(GetMapsFromPage(pagehtml, i * 25 + 1));
             }
 
             return maps.ToArray();
