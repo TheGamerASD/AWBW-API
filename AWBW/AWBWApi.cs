@@ -425,29 +425,44 @@ namespace AWBW
         /// <returns>An array of maps created by the user <paramref name="user"/>.</returns>
         public async Task<Map[]> GetUserMaps(User user)
         {
+            Map[] GetMapsFromPage(string html, int start = 1)
+            {
+                List<Map> mapList = new();
+
+                MatchCollection idMatches = Regex.Matches(html, @"(?<=<a href=prevmaps.php\?maps_id=)\d{1,7}(?=>.+?<\/a>)");
+
+                MatchCollection nameMatches = Regex.Matches(html, @"(?<=<a href=prevmaps.php\?maps_id=\d{1,7}>).+?(?=<\/a>)");
+
+                MatchCollection playerMatches = Regex.Matches(html, @"(?<=<td  valign=top align=left>\n<span class=small_text>\nPlayers: )\d{1,2}(?=<br>)");
+
+                for (int i = 0; i < idMatches.Count; i++)
+                {
+                    MatchCollection categoryMatches = Regex.Matches(html.Split($"<b>{i + start}.</b>")[1].Split($"<b>{i + start + 1}.</b>")[0], @"(?<=<a href=""categories\.php\?categories_id=)\d{1,2}(?="">[\w-/ ]+?<\/a>)");
+
+                    List<MapCategory> categories = new();
+
+                    foreach (Match match in categoryMatches.ToArray())
+                    {
+                        categories.Add(Enum.Parse<MapCategory>(match.Value));
+                    }
+
+                    mapList.Add(new Map() { id = int.Parse(idMatches[i].Value), name = nameMatches[i].Value, players = int.Parse(playerMatches[i].Value), categories = categories.ToArray() });
+                }
+
+                return mapList.ToArray();
+            }
+
             HttpResponseMessage response = await client.HttpGet($"design_map.php?username={user.username}");
             string html = await response.Content.ReadAsStringAsync();
 
             List<Map> maps = new();
+            maps.AddRange(GetMapsFromPage(html));
 
-            MatchCollection idMatches = Regex.Matches(html, @"(?<=<a href=prevmaps.php\?maps_id=)\d{1,7}(?=>.+?<\/a>)");
-
-            MatchCollection nameMatches = Regex.Matches(html, @"(?<=<a href=prevmaps.php\?maps_id=\d{1,7}>).+?(?=<\/a>)");
-
-            MatchCollection playerMatches = Regex.Matches(html, @"(?<=<td  valign=top align=left>\n<span class=small_text>\nPlayers: )\d{1,2}(?=<br>)");
-
-            for (int i = 0; i < idMatches.Count; i++)
+            if(int.Parse(Regex.Match(html, @"(?<=<span class=yellow_text_plain>\()\d+(?=&nbsp;Maps\)<\/span>)").Value) > 25)
             {
-                MatchCollection categoryMatches = Regex.Matches(html.Split($"<b>{i + 1}.</b>")[1].Split($"<b>{i + 2}.</b>")[0], @"(?<=<a href=""categories\.php\?categories_id=)\d{1,2}(?="">[\w-/ ]+?<\/a>)");
-
-                List<MapCategory> categories = new();
-
-                foreach (Match match in categoryMatches.ToArray())
-                {
-                    categories.Add(Enum.Parse<MapCategory>(match.Value));
-                }
-
-                maps.Add(new Map() { id = int.Parse(idMatches[i].Value), name = nameMatches[i].Value, players = int.Parse(playerMatches[i].Value), categories = categories.ToArray() });
+                HttpResponseMessage response2 = await client.HttpGet($"design_map.php?username={user.username}&start=26");
+                string html2 = await response2.Content.ReadAsStringAsync();
+                maps.AddRange(GetMapsFromPage(html2, 26));
             }
 
             return maps.ToArray();
