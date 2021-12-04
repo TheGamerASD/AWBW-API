@@ -486,6 +486,21 @@ namespace AWBW
             return new MapData() { data = data.TrimEnd('\n') };
         }
 
+        public async Task CommentOnMap(Account account, Map map, string comment)
+        {
+            List<(string key, string value)> pairs = new();
+
+            pairs.AddRange(
+                new[]
+                {
+                    ("comments_text", comment),
+                    ("maps_id", map.id.ToString())
+                }
+            );
+
+            await client.HttpPost($"prevmaps.php?maps_id={map.id}#comment_", $"prevmaps.php?maps_id={map.id}", account.cookie, pairs.ToArray());
+        }
+
         public async Task<Map[]> SearchMaps(MapSearchFilters searchFilters, MapSortCriteria firstBy = MapSortCriteria.MapName, MapSortCriteria thenBy = MapSortCriteria.MapName, MapSortCriteria lastBy = MapSortCriteria.MapName)
         {
             Map[] GetMapsFromPage(string html, int start = 1)
