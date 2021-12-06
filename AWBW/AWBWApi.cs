@@ -370,6 +370,8 @@ namespace AWBW
 
             string mapName = Regex.Match(html, @"(?<=<a class=bordertitle href=""prevmaps.php\?maps_id=\d{1,7}"">).+?(?=<\/a>)").Value;
 
+            string mapCreator = Regex.Match(html, @"(?<=<a href=""profile\.php\?username=.+?"">).+?(?=<\/a>)").Value;
+
             int mapPlayers = int.Parse(Regex.Match(html, @"(?<=First Published: (\d{1,2}\/\d{1,2}\/\d{4}|N\/A) \|\| Players: )\d{1,2}(?= \|\| Size: \d{1,}x\d{1,})").Value);
 
             MatchCollection categoryMatches = Regex.Matches(html, @"(?<=<a href=""categories\.php\?categories_id=)\d{1,2}(?="">[\w-/ ]+?<\/a>)");
@@ -381,7 +383,7 @@ namespace AWBW
                 categories.Add(Enum.Parse<MapCategory>(match.Value));
             }
 
-            return new Map() { id = mapID, name = mapName, players = mapPlayers, categories = categories.ToArray() };
+            return new Map() { id = mapID, name = mapName, creator = mapCreator, players = mapPlayers, categories = categories.ToArray() };
         }
 
         /// <summary>
@@ -399,6 +401,8 @@ namespace AWBW
 
             MatchCollection nameMatches = Regex.Matches(html, @"(?<=<a href=prevmaps.php\?maps_id=\d{1,7}>).+?(?=<\/a>)");
 
+            MatchCollection creatorMatches = Regex.Matches(html, @"(?<=<a class=norm href=""profile\.php\?username=.+?"">).+?(?=<\/a>)");
+
             MatchCollection playerMatches = Regex.Matches(html, @"(?<=<td  valign=top align=left>\n<span class=small_text>\nPlayers: )\d{1,2}(?=<br>)");
 
             for (int i = 0; i < idMatches.Count; i++)
@@ -412,7 +416,7 @@ namespace AWBW
                     categories.Add(Enum.Parse<MapCategory>(match.Value));
                 }
 
-                maps.Add(new Map() { id = int.Parse(idMatches[i].Value), name = nameMatches[i].Value, players = int.Parse(playerMatches[i].Value), categories = categories.ToArray() });
+                maps.Add(new Map() { id = int.Parse(idMatches[i].Value), name = nameMatches[i].Value, creator = creatorMatches[i].Value, players = int.Parse(playerMatches[i].Value), categories = categories.ToArray() });
             }
 
             return maps.ToArray();
@@ -433,6 +437,8 @@ namespace AWBW
 
                 MatchCollection nameMatches = Regex.Matches(html, @"(?<=<a href=prevmaps.php\?maps_id=\d{1,7}>).+?(?=<\/a>)");
 
+                MatchCollection creatorMatches = Regex.Matches(html, @"(?<=<a class=norm href=""profile\.php\?username=.+?"">).+?(?=<\/a>)");
+
                 MatchCollection playerMatches = Regex.Matches(html, @"(?<=<td  valign=top align=left>\n<span class=small_text>\nPlayers: )\d{1,2}(?=<br>)");
 
                 for (int i = 0; i < idMatches.Count; i++)
@@ -446,7 +452,7 @@ namespace AWBW
                         categories.Add(Enum.Parse<MapCategory>(match.Value));
                     }
 
-                    mapList.Add(new Map() { id = int.Parse(idMatches[i].Value), name = nameMatches[i].Value, players = int.Parse(playerMatches[i].Value), categories = categories.ToArray() });
+                    mapList.Add(new Map() { id = int.Parse(idMatches[i].Value), name = nameMatches[i].Value, creator = creatorMatches[i].Value, players = int.Parse(playerMatches[i].Value), categories = categories.ToArray() });
                 }
 
                 return mapList.ToArray();
@@ -511,6 +517,8 @@ namespace AWBW
 
                 MatchCollection nameMatches = Regex.Matches(html, @"(?<=<a href=prevmaps.php\?maps_id=\d{1,7}>).+?(?=<\/a>)");
 
+                MatchCollection creatorMatches = Regex.Matches(html, @"(?<=<a class=norm href=""profile\.php\?username=.+?"">).+?(?=<\/a>)");
+
                 MatchCollection playerMatches = Regex.Matches(html, @"(?<=<td  valign=top align=left>\n<span class=small_text>\nPlayers: )\d{1,2}(?=<br>)");
 
                 for (int i = 0; i < idMatches.Count; i++)
@@ -524,7 +532,7 @@ namespace AWBW
                         categories.Add(Enum.Parse<MapCategory>(match.Value));
                     }
 
-                    mapList.Add(new Map() { id = int.Parse(idMatches[i].Value), name = nameMatches[i].Value, players = int.Parse(playerMatches[i].Value), categories = categories.ToArray() });
+                    mapList.Add(new Map() { id = int.Parse(idMatches[i].Value), name = nameMatches[i].Value, creator = creatorMatches[i].Value, players = int.Parse(playerMatches[i].Value), categories = categories.ToArray() });
                 }
 
                 return mapList.ToArray();

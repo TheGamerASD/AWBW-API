@@ -50,6 +50,10 @@ namespace AWBW
         /// </summary>
         public int players;
         /// <summary>
+        /// The creator of the map.
+        /// </summary>
+        public string creator;
+        /// <summary>
         /// An array of the categories the map has.
         /// </summary>
         public MapCategory[] categories;
