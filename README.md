@@ -90,7 +90,7 @@ GameSettings settings = new GameSettings()
 ```C#
 GameBans bans = new GameBans()
 {
-  bannedCOs = GameBans.GetBannedCOsFromTier(Tier.FogTier4),
+  bannedCOs = TierList.Fog[3],
   bannedUnits = new Unit[] { Unit.BlackBomb, Unit.Stealth },
   labUnits = new Unit[] { Unit.Neotank }
 };

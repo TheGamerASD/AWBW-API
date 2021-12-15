@@ -122,47 +122,6 @@ namespace AWBW
         /// The units which can only be built by players who own a lab.
         /// </summary>
         public Unit[] labUnits = Array.Empty<Unit>();
-
-        /// <summary>
-        /// Get an array of banned COs from a tier.
-        /// </summary>
-        /// <param name="tier">The tier to get banned COs from. Any COs above this tier will be returned.</param>
-        /// <returns>An array of banned COs.</returns>
-        public static CO[] GetBannedCOsFromTier(Tier tier)
-        {
-            return tier switch
-            {
-                Tier.StdTier1 => new[] { CO.Colin, CO.Grit, CO.Hachi, CO.Kanbei, CO.Nell, CO.Sensei, CO.Sturm },
-                Tier.StdTier2 => new[] { CO.Colin, CO.Grit, CO.Hachi, CO.Kanbei, CO.Nell, CO.Sensei, CO.Sturm, CO.Hawke, CO.Javier, CO.Sasha, CO.VonBolt },
-                Tier.StdTier3 => new[] { CO.Colin, CO.Grit, CO.Hachi, CO.Kanbei, CO.Nell, CO.Sensei, CO.Sturm, CO.Hawke, CO.Javier, CO.Sasha, CO.VonBolt, CO.Eagle, CO.Max, CO.Olaf, CO.Sami },
-                Tier.StdTier4 => new[] { CO.Colin, CO.Grit, CO.Hachi, CO.Kanbei, CO.Nell, CO.Sensei, CO.Sturm, CO.Hawke, CO.Javier, CO.Sasha, CO.VonBolt, CO.Eagle, CO.Max, CO.Olaf, CO.Sami, CO.Andy, CO.Drake, CO.Kindle, CO.Lash, CO.Rachel },
-                Tier.FogTier1 => new[] { CO.Colin, CO.Hachi, CO.Kanbei, CO.Nell, CO.Sensei },
-                Tier.FogTier2 => new[] { CO.Colin, CO.Hachi, CO.Kanbei, CO.Nell, CO.Sensei, CO.Grit, CO.Hawke, CO.Javier, CO.Sasha, CO.Sturm, CO.VonBolt },
-                Tier.FogTier3 => new[] { CO.Colin, CO.Hachi, CO.Kanbei, CO.Nell, CO.Sensei, CO.Grit, CO.Hawke, CO.Javier, CO.Sasha, CO.Sturm, CO.VonBolt, CO.Eagle, CO.Max, CO.Olaf },
-                Tier.FogTier4 => new[] { CO.Colin, CO.Hachi, CO.Kanbei, CO.Nell, CO.Sensei, CO.Grit, CO.Hawke, CO.Javier, CO.Sasha, CO.Sturm, CO.VonBolt, CO.Eagle, CO.Max, CO.Olaf, CO.Sonja, CO.Andy, CO.Drake, CO.Kindle, CO.Lash, CO.Rachel },
-                Tier.HFTier1 => new[] { CO.Colin, CO.Hachi, CO.Nell },
-                Tier.HFTier2 => new[] { CO.Colin, CO.Hachi, CO.Nell, CO.Eagle, CO.Hawke, CO.Kanbei, CO.Olaf, CO.Sensei },
-                Tier.HFTier3 => new[] { CO.Colin, CO.Hachi, CO.Nell, CO.Eagle, CO.Hawke, CO.Kanbei, CO.Olaf, CO.Sensei, CO.Andy, CO.Drake, CO.Flak, CO.Javier, CO.Jugger, CO.Max, CO.Rachel, CO.Sasha, CO.Sturm, CO.VonBolt },
-                _ => throw new ArgumentException("Invalid tier.")
-            };
-        }
-
-        /// <summary>
-        /// Get a random tier from a game type.
-        /// </summary>
-        /// <param name="random">The <c>Random</c> instance to use.</param>
-        /// <param name="type">The game type.</param>
-        /// <returns>A random tier.</returns>
-        public static Tier GetRandomTier(Random random, GameType type)
-        {
-            return type switch
-            {
-                GameType.Standard => (Tier) random.Next(0, 4),
-                GameType.FogOfWar => (Tier) random.Next(4, 8),
-                GameType.HighFunds => (Tier) random.Next(8, 11),
-                _ => throw new ArgumentException("Invalid game type.")
-            };
-        }
     }
 
     public class MapSearchFilters

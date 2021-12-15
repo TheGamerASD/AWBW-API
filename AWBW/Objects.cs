@@ -129,4 +129,66 @@ namespace AWBW
     {
         public string data;
     }
+
+    public class TierList
+    {
+        CO[][] coTiers;
+
+        public static TierList Std
+        {
+            get => new(new[] { CO.Colin, CO.Grit, CO.Hachi, CO.Kanbei, CO.Nell, CO.Sensei, CO.Sturm }, new[] { CO.Hawke, CO.Javier, CO.Sasha, CO.VonBolt }, new[] { CO.Eagle, CO.Max, CO.Olaf, CO.Sami }, new[] { CO.Andy, CO.Drake, CO.Kindle, CO.Lash, CO.Rachel }, Array.Empty<CO>());
+        }
+
+        public static TierList Fog
+        {
+            get => new(new[] { CO.Colin, CO.Hachi, CO.Kanbei, CO.Nell, CO.Sensei }, new[] { CO.Grit, CO.Hawke, CO.Javier, CO.Sasha, CO.Sturm, CO.VonBolt }, new[] { CO.Eagle, CO.Max, CO.Olaf }, new[] { CO.Sonja, CO.Andy, CO.Drake, CO.Kindle, CO.Lash, CO.Rachel }, Array.Empty<CO>());
+        }
+
+        public static TierList HF
+        {
+            get => new(new[] { CO.Colin, CO.Hachi, CO.Nell }, new[] { CO.Eagle, CO.Hawke, CO.Kanbei, CO.Olaf, CO.Sensei }, new[] { CO.Andy, CO.Drake, CO.Flak, CO.Javier, CO.Jugger, CO.Max, CO.Rachel, CO.Sasha, CO.Sturm, CO.VonBolt }, Array.Empty<CO>());
+        }
+
+        public TierList(params CO[][] coTiers)
+        {
+            this.coTiers = coTiers;
+        }
+
+        public int[] GetTiers()
+        {
+            List<int> tiers = new();
+
+            for (int i = 0; i < coTiers.Length; i++)
+            {
+                tiers.Add(i);
+            }
+
+            return tiers.ToArray();
+        }
+
+        /// <summary>
+        /// Gets the COs which should be banned for a tier in this tierlist.
+        /// </summary>
+        /// <param name="tier">The tier to get the banned COs from.</param>
+        /// <returns>An array of COs.<returns>
+        public CO[] this[int tier]
+        {
+            get
+            {
+                if (!GetTiers().Contains(tier))
+                {
+                    throw new IndexOutOfRangeException("Tier does not exist in tierlist.");
+                }
+
+                List<CO> bannedCOs = new();
+
+                for (int i = tier - 1; i >= 0; i--)
+                {
+                    bannedCOs.AddRange(coTiers[i]);
+                }
+
+                return bannedCOs.ToArray();
+            }
+        }
+    }
 }
