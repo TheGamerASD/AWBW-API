@@ -154,16 +154,9 @@ namespace AWBW
             this.coTiers = coTiers;
         }
 
-        public int[] GetTiers()
+        public int GetTiers()
         {
-            List<int> tiers = new();
-
-            for (int i = 0; i < coTiers.Length; i++)
-            {
-                tiers.Add(i);
-            }
-
-            return tiers.ToArray();
+            return coTiers.Length;
         }
 
         /// <summary>
@@ -175,7 +168,7 @@ namespace AWBW
         {
             get
             {
-                if (!GetTiers().Contains(tier))
+                if (tier >= GetTiers())
                 {
                     throw new IndexOutOfRangeException("Tier does not exist in tierlist.");
                 }
