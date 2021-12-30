@@ -154,6 +154,11 @@ namespace AWBW
             this.coTiers = coTiers;
         }
 
+        public TierList(IEnumerable<IEnumerable<CO>> coTiers)
+        {
+            this.coTiers = coTiers.ToList().ConvertAll(tier => tier.ToArray()).ToArray();
+        }
+
         public int GetTiers()
         {
             return coTiers.Length;

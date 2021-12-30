@@ -464,7 +464,7 @@ namespace AWBW
             List<Map> maps = new();
             maps.AddRange(GetMapsFromPage(html));
 
-            if(int.Parse(Regex.Match(html, @"(?<=<span class=yellow_text_plain>\()\d+(?=&nbsp;Maps\)<\/span>)").Value) > 25)
+            if (int.Parse(Regex.Match(html, @"(?<=<span class=yellow_text_plain>\()\d+(?=&nbsp;Maps\)<\/span>)").Value) > 25)
             {
                 HttpResponseMessage response2 = await client.HttpGet($"design_map.php?username={user.username}&start=26");
                 string html2 = await response2.Content.ReadAsStringAsync();
@@ -490,6 +490,34 @@ namespace AWBW
             }
 
             return new MapData() { data = data.TrimEnd('\n') };
+        }
+
+        public async Task CreateMap(Account account, string name, int width, int height)
+        {
+            if (width is < 5 or > 36)
+            {
+                throw new ArgumentOutOfRangeException("width", "Width cannot be less than 5 or greater than 36.");
+            }
+
+            if (height is < 5 or > 36)
+            {
+                throw new ArgumentOutOfRangeException("height", "Height cannot be less than 5 or greater than 36.");
+            }
+
+            List<(string key, string value)> pairs = new();
+
+            pairs.AddRange(
+                new[]
+                {
+                    ("maps_name", name),
+                    ("maps_players", "2"),
+                    ("maps_width", width.ToString()),
+                    ("maps_height", height.ToString()),
+                    ("maps_new", "1"),
+                }
+            );
+
+            await client.HttpPost("design.php", "design.php", account.cookie, pairs.ToArray());
         }
 
         public async Task CommentOnMap(Account account, Map map, string comment)
