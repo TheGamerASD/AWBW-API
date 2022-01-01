@@ -8,7 +8,7 @@ First, add this to your project:
 using AWBW;
 ```
 
-To use many of the API functions, you will need to create an `Account`.
+To use many of the API functions, you will need to create an `BrowserAccount`.
 To get the tokens required, look below:
 
 <details>
@@ -30,9 +30,9 @@ To get the tokens required, look below:
   6. Click on the 'https://awbw.amarriner.com' button.
 </details>
 
-Here's how you can create an `Account` object:
+Here's how you can create a `BrowserAccount` object:
 ```C#
-Account account = new Account("PHPSESSID HERE", "awbw_username HERE", "awbw_password HERE");
+BrowserAccount account = new BrowserAccount("PHPSESSID HERE", "awbw_password HERE");
 ```
 Make sure to keep these tokens private, as anyone with them can control your account.
 
