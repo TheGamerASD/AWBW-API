@@ -315,17 +315,22 @@ namespace AWBW
             Weather weather = Enum.Parse<Weather>(Regex.Match(html, @"(?<=<tr><td align=center style="".*?""><b>Weather<\/b><\/td><\/tr>\n<tr>\n<td align=center><span class=small_text style="".*?"">)\w+?(?=<\/span>\n<\/td>)").Value, true);
             int funds = int.Parse(Regex.Match(html, @"(?<=<tr><td align=center style="".*?""><b>Funds<\/b><\/td><\/tr>\n<tr>\n<td align=center><span class=small_text style="".*?"">)\d+?(?=<\/span>\n<\/td>)").Value);
             bool powers = Regex.Match(html, @"(?<=<tr><td align=center style="".*?""><b>Powers<\/b><\/td><\/tr>\n<tr>\n<td align=center><span class=small_text style="".*?"">)(On|Off)(?=<\/span>\n<\/td>)").Value == "On";
-            int startingFunds = int.Parse(Regex.Match(html, @"(?<=<tr><td align=center style="".*?""><b>Starting<\/b><\/td><\/tr>\n<tr>\n<td align=center><span class=small_text style="".*?"">)\d+?(?=G<\/span>\n<\/td>)").Value);
-            string captureLimit = Regex.Match(html, @"title=""Capture Limit: (\d+|Off)""").Value;
-            string daysLimit = Regex.Match(html, @"title=""Days Limit: (\d+|Off)""").Value;
-            string unitLimit = Regex.Match(html, @"title=""Unit Limit: (\d+|Off)""").Value;
+            string startingFunds = Regex.Match(html, @"(?<=<tr><td align=center style="".*?""><b>Starting<\/b><\/td><\/tr>\n<tr>\n<td align=center><span class=small_text style="".*?"">)\d+?(?=G<\/span>\n<\/td>)").Value;
+            string captureLimit = Regex.Match(html, @"(?<=title=""Capture Limit: )(\d+|Off)(?="")").Value;
+            string daysLimit = Regex.Match(html, @"(?<=title=""Days Limit: )(\d+|Off)(?="")").Value;
+            string unitLimit = Regex.Match(html, @"(?<=title=""Unit Limit: )(\d+|Off)(?="")").Value;
+            int sFunds = startingFunds == "" ? 0 : int.Parse(startingFunds);
             int cLimit = captureLimit == "Off" ? 1000 : int.Parse(captureLimit);
             int dLimit = daysLimit == "Off" ? 0 : int.Parse(daysLimit);
             int uLimit = unitLimit == "Off" ? 5000 : int.Parse(unitLimit);
 
-            GameSettings gameSettings = new GameSettings() { captureLimit = cLimit, coPowers = powers, daysLimit = dLimit, fog = fog, fundsPerTurn = funds, startingFunds = startingFunds, timerSettings = timerSettings, unitLimit = uLimit, weather = weather };
+            GameSettings gameSettings = new GameSettings() { captureLimit = cLimit, coPowers = powers, daysLimit = dLimit, fog = fog, fundsPerTurn = funds, startingFunds = sFunds, timerSettings = timerSettings, unitLimit = uLimit, weather = weather };
 
-            return new Game() { id = gameID, name = gameName, map = gameMap, bans = gameBans, settings = gameSettings, isPrivate = isPrivate };
+            MatchCollection playerMatches = Regex.Matches(html, @"(?<=<a class=norm href=""profile\.php\?username=.+?"">).+?(?=<\/a>)");
+
+            string[] players = playerMatches.ToList().ConvertAll(m => m.Value).ToArray();
+
+            return new Game() { id = gameID, name = gameName, map = gameMap, bans = gameBans, settings = gameSettings, isPrivate = isPrivate, players = players };
         }
 
         /// <summary>

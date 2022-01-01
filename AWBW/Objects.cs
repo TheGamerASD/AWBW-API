@@ -28,11 +28,14 @@ namespace AWBW
         /// The bans the game uses.
         /// </summary>
         public GameBans bans;
-
         /// <summary>
         /// If the game has a password or not.
         /// </summary>
         public bool isPrivate;
+        /// <summary>
+        /// The usernames of the players in the game.
+        /// </summary>
+        public string[] players;
     }
 
     public struct Map
