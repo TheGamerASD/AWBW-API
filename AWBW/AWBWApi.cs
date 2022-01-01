@@ -30,7 +30,7 @@ namespace AWBW
         /// <param name="gameSettings">The settings the game will use.</param>
         /// <param name="gameBans">The bans the game will use.</param>
         /// <returns>The game which has been created.</returns>
-        public async Task<Game> CreateGame(Account account, string name, Map map, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null) => await CreatePrivateGame(account, name, map, "", comment, gameSettings, gameBans);
+        public async Task<Game> CreateGame(BrowserAccount account, string name, Map map, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null) => await CreatePrivateGame(account, name, map, "", comment, gameSettings, gameBans);
 
         /// <summary>
         /// Create a private game.
@@ -43,7 +43,7 @@ namespace AWBW
         /// <param name="gameSettings">The settings the game will use.</param>
         /// <param name="gameBans">The bans the game will use.</param>
         /// <returns>The game which has been created.</returns>
-        public async Task<Game> CreatePrivateGame(Account account, string name, Map map, string password, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null)
+        public async Task<Game> CreatePrivateGame(BrowserAccount account, string name, Map map, string password, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null)
         {
             if (name.Length > 40)
             {
@@ -113,7 +113,7 @@ namespace AWBW
         /// <param name="comment">The description of the game.</param>
         /// <param name="gameSettings">The settings the game will use.</param>
         /// <param name="gameBans">The bans the game will use.</param>
-        public async Task CreateEmptyGame(Account account, string name, Map map, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null) => await CreatePrivateEmptyGame(account, name, map, "", comment, gameSettings, gameBans);
+        public async Task CreateEmptyGame(BrowserAccount account, string name, Map map, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null) => await CreatePrivateEmptyGame(account, name, map, "", comment, gameSettings, gameBans);
 
         /// <summary>
         /// Create a private game with no players in it, similar to a Z-Game.
@@ -127,7 +127,7 @@ namespace AWBW
         /// <param name="comment">The description of the game.</param>
         /// <param name="gameSettings">The settings the game will use.</param>
         /// <param name="gameBans">The bans the game will use.</param>
-        public async Task CreatePrivateEmptyGame(Account account, string name, Map map, string password, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null)
+        public async Task CreatePrivateEmptyGame(BrowserAccount account, string name, Map map, string password, string comment = "", GameSettings gameSettings = null, GameBans gameBans = null)
         {
             if (name.Length > 40)
             {
@@ -185,7 +185,7 @@ namespace AWBW
         /// <param name="game">The game to join.</param>
         /// <param name="country">The country to join with.</param>
         /// <param name="co">The CO to join with./param>
-        public async Task JoinGame(Account account, Game game, Country country, CO co)
+        public async Task JoinGame(BrowserAccount account, Game game, Country country, CO co)
         {
             List<(string key, string value)> pairs = new();
 
@@ -210,7 +210,7 @@ namespace AWBW
         /// <param name="country">The country to join with.</param>
         /// <param name="co">The CO to join with./param>
         /// <param name="password">The password for the game.</param>
-        public async Task JoinPrivateGame(Account account, Game game, Country country, CO co, string password)
+        public async Task JoinPrivateGame(BrowserAccount account, Game game, Country country, CO co, string password)
         {
             List<(string key, string value)> pairs = new();
 
@@ -234,7 +234,7 @@ namespace AWBW
         /// <param name="account">The account to use.</param>
         /// <param name="gameID">The ID of the game.</param>
         /// <returns>The game with the ID <paramref name="gameID"/>.</returns>
-        public async Task<Game> GetGame(Account account, int gameID)
+        public async Task<Game> GetGame(BrowserAccount account, int gameID)
         {
             HttpResponseMessage response = await client.HttpGet($"join.php?games_id={gameID}", account.cookie);
             string html = await response.Content.ReadAsStringAsync();
@@ -333,7 +333,7 @@ namespace AWBW
         /// </summary>
         /// <param name="account">The account to delete the game with. You must be the creator of the game to delete it.</param>
         /// <param name="game">The game to delete.</param>
-        public async Task DeleteGame(Account account, Game game)
+        public async Task DeleteGame(BrowserAccount account, Game game)
         {
             await client.HttpGet($"yourgames.php?games_id={game.id}&action=reallydelete", account.cookie);
         }
@@ -492,7 +492,7 @@ namespace AWBW
             return new MapData() { data = data.TrimEnd('\n') };
         }
 
-        public async Task CreateMap(Account account, string name, int width, int height)
+        public async Task CreateMap(BrowserAccount account, string name, int width, int height)
         {
             if (width is < 5 or > 36)
             {
@@ -520,7 +520,7 @@ namespace AWBW
             await client.HttpPost("design.php", "design.php", account.cookie, pairs.ToArray());
         }
 
-        public async Task CommentOnMap(Account account, Map map, string comment)
+        public async Task CommentOnMap(BrowserAccount account, Map map, string comment)
         {
             List<(string key, string value)> pairs = new();
 
@@ -617,7 +617,7 @@ namespace AWBW
             return maps.ToArray();
         }
 
-        public async Task UploadMap(Account account, string name, MapData data)
+        public async Task UploadMap(BrowserAccount account, string name, MapData data)
         {
             List<KeyValuePair<string, string>> requestBody = new();
 
@@ -665,6 +665,27 @@ namespace AWBW
             content.Add(content5, "overwrite");
 
             await client.PostAsync("https://awbw.amarriner.com/uploadmap.php", content);
+        }
+
+        public async Task Login(BrowserAccount account, string username, string password)
+        {
+            List<(string key, string value)> pairs = new();
+
+            pairs.AddRange(
+                new[]
+                {
+                    ("username", username),
+                    ("password", password)
+                }
+            );
+
+            HttpResponseMessage response = await client.HttpPost($"logincheck.php", $"", account.cookie, pairs.ToArray());
+            string html = await response.Content.ReadAsStringAsync();
+
+            if (html == "0")
+            {
+                throw new ArgumentException("Invalid username or password.");
+            }
         }
     }
 }

@@ -79,21 +79,18 @@ namespace AWBW
         }
     }
 
-    public class Account
+    public class BrowserAccount
     {
-        internal string cookie, username, password;
+        internal string cookie;
 
         /// <summary>
         /// See https://github.com/TheGamerASD/AWBW-API/blob/main/README.md for how to create an account.
         /// </summary>
         /// <param name="phpsessid">Your PHPSESSID cookie.</param>
-        /// <param name="awbwusername">Your username cookie.</param>
         /// <param name="awbwpassword">Your password cookie. It should start with a % sign.</param>
-        public Account(string phpsessid, string awbwusername, string awbwpassword)
+        public BrowserAccount(string phpsessid, string awbwpassword)
         {
-            cookie = $"PHPSESSID={phpsessid}; awbw_username={awbwusername}; awbw_password={awbwpassword}";
-            username = awbwusername;
-            password = awbwpassword;
+            cookie = $"PHPSESSID={phpsessid}; awbw_password={awbwpassword}";
         }
     }
 
