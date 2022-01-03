@@ -104,6 +104,34 @@ namespace AWBW
         /// </summary>
         public string username;
 
+        /// <summary>
+        /// The global league rating of the user.
+        /// </summary>
+        public decimal elo;
+
+        /// <summary>
+        /// The number of global league games the user has won.
+        /// </summary>
+        public int leagueWins;
+
+        /// <summary>
+        /// The number of global league games the user has lost.
+        /// </summary>
+        public int leagueLosses;
+
+        /// <summary>
+        /// The number of global league games the user has drawed.
+        /// </summary>
+        public int leagueDraws;
+
+        /// <summary>
+        /// The number of global league games the user has completed.
+        /// </summary>
+        public int leagueMatches
+        {
+            get => leagueWins + leagueLosses + leagueDraws;
+        }
+
         public override bool Equals(object obj)
         {
             return username == ((User)obj).username;

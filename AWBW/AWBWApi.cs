@@ -363,13 +363,20 @@ namespace AWBW
             HttpResponseMessage response = await client.HttpGet($"profile.php?username={username}");
             string html = await response.Content.ReadAsStringAsync();
 
+            decimal elo = decimal.Parse(Regex.Match(html, @"(?<=<td style=""border-top: 1px solid #0066CC; padding-top: 5px;"">)\d+\.?\d*").Value);
+
+            string wld = Regex.Match(html, @"(?<=<td>)\d+ - \d+ - \d+(?=&nbsp;<\/td>)").Value.Replace(" ", "");
+            int wins = int.Parse(wld.Split('-')[0]);
+            int losses = int.Parse(wld.Split('-')[1]);
+            int draws = int.Parse(wld.Split('-')[2]);
+
             if (html.Contains("Invalid User!"))
             {
                 throw new ArgumentException("User does not exist.");
             }
             else
             {
-                return new User() { username = username };
+                return new User() { username = username, elo = elo, leagueWins = wins, leagueLosses = losses, leagueDraws = draws };
             }
         }
 
