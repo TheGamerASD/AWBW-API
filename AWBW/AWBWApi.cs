@@ -333,6 +333,16 @@ namespace AWBW
             return new Game() { id = gameID, name = gameName, map = gameMap, bans = gameBans, settings = gameSettings, isPrivate = isPrivate, players = players };
         }
 
+        public async Task KickPlayerFromGame(BrowserAccount account, Game game, string username)
+        {
+            HttpResponseMessage response = await client.HttpGet("yourgames.php", account.cookie);
+            string html = await response.Content.ReadAsStringAsync();
+
+            string id = Regex.Match(html, $@"(?<=endPrompt_remove_game{game.id}_player)\d+(?= = ""Are you sure you want to remove {username} from the game\?"";)").Value;
+
+            await client.HttpGet($"removeplayer.php?games_id={game.id}&players_id={id}&reallyremove=YES", account.cookie);
+        }
+
         /// <summary>
         /// Delete a game.
         /// </summary>
@@ -684,6 +694,7 @@ namespace AWBW
                 }
             );
 
+            await client.HttpGet("logout.php", account.cookie);
             HttpResponseMessage response = await client.HttpPost($"logincheck.php", $"", account.cookie, pairs.ToArray());
             string html = await response.Content.ReadAsStringAsync();
 
