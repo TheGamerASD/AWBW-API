@@ -333,6 +333,16 @@ namespace AWBW
             return new Game() { id = gameID, name = gameName, map = gameMap, bans = gameBans, settings = gameSettings, isPrivate = isPrivate, players = players };
         }
 
+        public async Task StartGame(BrowserAccount account, Game game)
+        {
+            HttpResponseMessage response = await client.HttpGet("yourgames.php", account.cookie);
+            string html = await response.Content.ReadAsStringAsync();
+
+            string id = Regex.Match(html, $@"(?<=startURL = ""yourgames\.php\?uniq_id=)\d+(?=&games_id={game.id}&action=start"";)").Value;
+
+            await client.HttpGet($"yourgames.php?uniq_id={id}&games_id={game.id}&action=start", account.cookie);
+        }
+
         public async Task KickPlayerFromGame(BrowserAccount account, Game game, string username)
         {
             HttpResponseMessage response = await client.HttpGet("yourgames.php", account.cookie);
