@@ -7,7 +7,7 @@ on:
 jobs:
   build:
 
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -18,7 +18,7 @@ jobs:
     - name: Restore Dependencies
       run: dotnet restore
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build --configuration Release --no-restore 
     - name: Automatic Release
       uses: marvinpinto/action-automatic-releases@latest
       with:
@@ -27,4 +27,4 @@ jobs:
         prerelease: false
         title: "Release Build"
         files: |
-          *.dll
+          bin/Release/net5.0/AWBW.dll
