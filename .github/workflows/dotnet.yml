@@ -27,4 +27,4 @@ jobs:
         prerelease: false
         title: "Release Build"
         files: |
-          bin/Release/net5.0/AWBW.dll
+          ./bin/Release/net5.0/AWBW.dll
