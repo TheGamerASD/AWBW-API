@@ -19,6 +19,9 @@ jobs:
       run: dotnet restore
     - name: Build
       run: dotnet build --configuration Release --no-restore 
+    - name: Get Dir
+      run: |
+        dir
     - name: Automatic Release
       uses: marvinpinto/action-automatic-releases@latest
       with:
