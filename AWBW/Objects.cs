@@ -35,7 +35,13 @@ namespace AWBW
         /// <summary>
         /// The usernames of the players in the game.
         /// </summary>
-        public string[] players;
+        public Player[] players;
+    }
+
+    public struct Player
+    {
+        public string username;
+        public bool hasLost;
     }
 
     public struct Map

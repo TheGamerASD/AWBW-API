@@ -303,11 +303,11 @@ namespace AWBW
 
             TimerSettings timerSettings = new TimerSettings()
             {
-                initialTime = int.Parse(Regex.Match(html, @"(?<=<tr><td align=center style=""""><b>Initial<\/b><\/td><\/tr>\n<tr>\n<td align=center><span class=small_text style="""">)\d+(?= days<\/span>\n<\/td>)").Value),
+                initialTime = int.Parse(Regex.Match(html, @"(?<=<tr><td .+?><b>Initial<\/b><\/td><\/tr>\n<tr>\n<td align=center><span .+?>)\d+(?= \w+?<\/span>\n<\/td>)").Value),
                 initialTimeUnit = Enum.Parse<TimeUnit>(itunit, true),
-                increment = int.Parse(Regex.Match(html, @"(?<=<tr><td align=center style=""""><b>Increment<\/b><\/td><\/tr>\n<tr>\n<td align=center><span class=small_text style="""">)\d+(?= \w+?<\/span>\n<\/td>)").Value),
+                increment = int.Parse(Regex.Match(html, @"(?<=<tr><td .+?><b>Increment<\/b><\/td><\/tr>\n<tr>\n<td align=center><span .+?>)\d+(?= \w+?<\/span>\n<\/td>)").Value),
                 incrementUnit = Enum.Parse<TimeUnit>(inunit, true),
-                maxTurnTime = int.Parse(Regex.Match(html, @"(?<=<tr><td align=center style=""""><b>Max Turn<\/b><\/td><\/tr>\n<tr>\n<td align=center><span class=small_text style="""">)\d+(?= \w+?<\/span>\n<\/td>)").Value),
+                maxTurnTime = int.Parse(Regex.Match(html, @"(?<=<tr><td .+?><b>Max Turn<\/b><\/td><\/tr>\n<tr>\n<td align=center><span .+?>)\d+(?= \w+?<\/span>\n<\/td>)").Value),
                 maxTurnTimeUnit = Enum.Parse<TimeUnit>(mttunit, true),
             };
 
@@ -328,7 +328,26 @@ namespace AWBW
 
             MatchCollection playerMatches = Regex.Matches(html, @"(?<=<a class=norm href=""profile\.php\?username=.+?"">).+?(?=<\/a>)");
 
-            string[] players = playerMatches.ToList().ConvertAll(m => m.Value).ToArray();
+            string[] playerNames = playerMatches.ToList().ConvertAll(m => m.Value).ToArray();
+            List<Player> playerList = new();
+
+            foreach (string player in playerNames)
+            {
+                if(player.StartsWith("<b>") && player.EndsWith("</b>"))
+                {
+                    playerList.Add(new Player() { username = Regex.Match(player, @"(?<=<\w>).+(?=<\/\w>)").Value, hasLost = false });
+                }
+                else if (player.StartsWith("<i>") && player.EndsWith("</i>"))
+                {
+                    playerList.Add(new Player() { username = Regex.Match(player, @"(?<=<\w>).+(?=<\/\w>)").Value, hasLost = true });
+                }
+                else
+                {
+                    playerList.Add(new Player() { username = player, hasLost = false });
+                }
+            }
+
+            Player[] players = playerList.ToArray();
 
             return new Game() { id = gameID, name = gameName, map = gameMap, bans = gameBans, settings = gameSettings, isPrivate = isPrivate, players = players };
         }
