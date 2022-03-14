@@ -138,6 +138,11 @@ namespace AWBW
             get => leagueWins + leagueLosses + leagueDraws;
         }
 
+        /// <summary>
+        /// The number of games this user has played.
+        /// </summary>
+        public int totalGames;
+
         public override bool Equals(object obj)
         {
             return username == ((User)obj).username;

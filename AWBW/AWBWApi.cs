@@ -392,21 +392,21 @@ namespace AWBW
             HttpResponseMessage response = await client.HttpGet($"profile.php?username={username}");
             string html = await response.Content.ReadAsStringAsync();
 
-            decimal elo = decimal.Parse(Regex.Match(html, @"(?<=<td style=""border-top: 1px solid #0066CC; padding-top: 5px;"">)\d+\.?\d*").Value);
-
-            string wld = Regex.Match(html, @"(?<=<td>)\d+ - \d+ - \d+(?=&nbsp;<\/td>)").Value.Replace(" ", "");
-            int wins = int.Parse(wld.Split('-')[0]);
-            int losses = int.Parse(wld.Split('-')[1]);
-            int draws = int.Parse(wld.Split('-')[2]);
-
             if (html.Contains("Invalid User!"))
             {
                 throw new ArgumentException("User does not exist.");
             }
-            else
-            {
-                return new User() { username = username, elo = elo, leagueWins = wins, leagueLosses = losses, leagueDraws = draws };
-            }
+
+            decimal elo = decimal.Parse(Regex.Match(html, @"(?<=<td style=""border-top: 1px solid #0066CC; padding-top: 5px;"">)\d+\.?\d*").Value);
+
+            string wld = Regex.Match(html, @"(?<=<td>)\d+ - \d+ - \d+(?=&nbsp;<\/td>)").Value.Replace(" ", "");
+            int wins = int.Parse(wld.Split('-')[0].Trim());
+            int losses = int.Parse(wld.Split('-')[1].Trim());
+            int draws = int.Parse(wld.Split('-')[2].Trim());
+
+            int totalGames = int.Parse(Regex.Match(html, @"(?<=<img src=https:\/\/awbw\.amarriner\.com\/terrain\/\w+?\/\w+?jugger\.png style=""border-right: 1px solid #AAAAAA; vertical-align:middle;""> <b>\d+\/)\d+(?=<\/b>)").Value);
+
+            return new User() { username = username, elo = elo, leagueWins = wins, leagueLosses = losses, leagueDraws = draws, totalGames = totalGames };
         }
 
         /// <summary>
@@ -515,7 +515,7 @@ namespace AWBW
             List<Map> maps = new();
             maps.AddRange(GetMapsFromPage(html));
 
-            if (int.Parse(Regex.Match(html, @"(?<=<span class=yellow_text_plain>\()\d+(?=&nbsp;Maps\)<\/span>)").Value) > 25)
+            if (int.Parse(Regex.Match(html, @"(?<=<span class=yellow_text_plain>\()\d+(?=&nbsp;Maps?\)<\/span>)").Value) > 25)
             {
                 HttpResponseMessage response2 = await client.HttpGet($"design_map.php?username={user.username}&start=26");
                 string html2 = await response2.Content.ReadAsStringAsync();
@@ -523,6 +523,16 @@ namespace AWBW
             }
 
             return maps.ToArray();
+        }
+
+        public async Task<string[]> GetOnlineUsers()
+        {
+            HttpResponseMessage response = await client.HttpGet($"users.php");
+            string html = await response.Content.ReadAsStringAsync();
+
+            MatchCollection matches = Regex.Matches(html, @"(?<=<a href=""profile\.php\?username=)[^<>]+(?=""><b>)");
+            string[] users = matches.ToList().ConvertAll(m => m.Value).ToArray();
+            return users;
         }
 
         public async Task<MapData> GetMapData(Map map)
